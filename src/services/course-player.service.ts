@@ -59,6 +59,13 @@ export interface QuizResult {
   totalQuestions: number;
 }
 
+export interface CourseProgress {
+  completedLectures: string[];
+  completedSections: string[];
+  quizzesPassed: string[];
+  completionPercentage: number;
+}
+
 export const coursePlayerService = {
   /**
    * Get course content for the player
@@ -219,14 +226,9 @@ export const coursePlayerService = {
   /**
    * Get course progress
    */
-  async getCourseProgress(courseId: string): Promise<{
-    completedLectures: string[];
-    completedSections: string[];
-    quizzesPassed: string[];
-    completionPercentage: number;
-  }> {
+  async getCourseProgress(courseId: string): Promise<CourseProgress> {
     try {
-      const result = await apiClient.get(API_ENDPOINTS.courses.progress(courseId));
+      const result = await apiClient.get<CourseProgress>(API_ENDPOINTS.courses.progress(courseId));
       return result;
     } catch (error) {
       console.error('Error fetching course progress:', error);
