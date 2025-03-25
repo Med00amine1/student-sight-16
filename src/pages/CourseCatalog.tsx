@@ -14,10 +14,10 @@ export default function CourseCatalog() {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
   
-  // Fetch all courses for catalog
+  // Fetch all courses for catalog - fixed method name to getAllCourses
   const { data: allCourses, isLoading, error } = useQuery({
     queryKey: ['catalogCourses'],
-    queryFn: catalogService.getCatalogCourses,
+    queryFn: catalogService.getAllCourses,
   });
   
   // Filtered courses based on search
@@ -26,12 +26,12 @@ export default function CourseCatalog() {
   // Handle search functionality
   const handleSearch = () => {
     if (!searchQuery.trim()) {
-      setFilteredCourses(allCourses || []);
+      setFilteredCourses(allCourses?.courses || []);
       return;
     }
     
     const normalizedQuery = searchQuery.toLowerCase().trim();
-    const filtered = allCourses?.filter(course => 
+    const filtered = allCourses?.courses?.filter(course => 
       course.title.toLowerCase().includes(normalizedQuery)
     ) || [];
     
@@ -45,7 +45,7 @@ export default function CourseCatalog() {
   // Update filtered courses when all courses load
   useEffect(() => {
     if (allCourses) {
-      setFilteredCourses(allCourses);
+      setFilteredCourses(allCourses.courses || []);
     }
   }, [allCourses]);
   
@@ -77,7 +77,7 @@ export default function CourseCatalog() {
         onClick={() => navigate(`/course/${course.id}`)}>
         <div className="block">
           <img 
-            src={course.image} 
+            src={course.image || '/placeholder.svg'} 
             alt={course.title} 
             className="w-full h-32 object-cover rounded-lg mb-4" 
           />
@@ -91,7 +91,9 @@ export default function CourseCatalog() {
             </div>
             <p className="text-xl mt-2">
               ${course.price.toFixed(2)}
-              <span className="line-through text-gray-400 ml-2">${course.originalPrice.toFixed(2)}</span>
+              {course.originalPrice && 
+                <span className="line-through text-gray-400 ml-2">${course.originalPrice.toFixed(2)}</span>
+              }
             </p>
           </div>
         </div>

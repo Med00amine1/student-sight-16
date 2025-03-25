@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Search, User, Menu } from "lucide-react";
 import { toast } from "sonner";
 import { authService } from "@/services/auth.service";
-import { catalogService } from "@/services/catalog.service";
+import { catalogService, CatalogCourse } from "@/services/catalog.service";
 
 interface Course {
   id: string;
@@ -36,13 +36,13 @@ const Index = () => {
         const userData = await authService.getCurrentUser();
         setUser(userData);
         
-        // Fetch featured courses
+        // Fetch featured courses and convert to Course type
         const featured = await catalogService.getFeaturedCourses();
-        setFeaturedCourses(featured.slice(0, 4)); // Show only 4 featured courses
+        setFeaturedCourses(featured.slice(0, 4).map(convertToCourse)); // Show only 4 featured courses
         
-        // Fetch recommended courses
+        // Fetch recommended courses and convert to Course type
         const recommended = await catalogService.getRecommendedCourses();
-        setRecommendedCourses(recommended.slice(0, 4)); // Show only 4 recommended courses
+        setRecommendedCourses(recommended.slice(0, 4).map(convertToCourse)); // Show only 4 recommended courses
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to load course data");
@@ -53,6 +53,20 @@ const Index = () => {
     
     fetchData();
   }, []);
+  
+  // Helper function to convert CatalogCourse to Course
+  const convertToCourse = (catalogCourse: CatalogCourse): Course => {
+    return {
+      id: catalogCourse.id,
+      title: catalogCourse.title,
+      price: catalogCourse.price,
+      originalPrice: catalogCourse.originalPrice || catalogCourse.price, // Default to price if originalPrice is not set
+      rating: catalogCourse.rating,
+      reviewCount: catalogCourse.reviewCount,
+      image: catalogCourse.image || '/placeholder.svg',
+      category: catalogCourse.category || 'General'
+    };
+  };
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
