@@ -1,6 +1,6 @@
 
 import { apiClient } from './api.service';
-import { API_ENDPOINTS } from '@/config/api';
+import { API_ENDPOINTS, API_BASE_URL } from '@/config/api';
 import { toast } from 'sonner';
 
 export interface CatalogCourse {
@@ -22,7 +22,7 @@ export const catalogService = {
    */
   async getCatalogCourses(): Promise<CatalogCourse[]> {
     try {
-      return await apiClient.get<CatalogCourse[]>(`${API_BASE_URL}/catalog/courses`);
+      return await apiClient.get<CatalogCourse[]>(API_ENDPOINTS.catalog.getAll);
     } catch (error) {
       console.error('Error fetching catalog courses:', error);
       // Fallback to mock data
@@ -110,7 +110,7 @@ export const catalogService = {
    */
   async searchCatalogCourses(query: string): Promise<CatalogCourse[]> {
     try {
-      return await apiClient.get<CatalogCourse[]>(`${API_BASE_URL}/catalog/search?q=${encodeURIComponent(query)}`);
+      return await apiClient.get<CatalogCourse[]>(API_ENDPOINTS.catalog.search(query));
     } catch (error) {
       console.error('Error searching catalog courses:', error);
       // Get all courses and filter them client-side as fallback
