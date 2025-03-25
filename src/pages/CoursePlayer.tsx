@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { coursePlayerService, CourseContent, Lecture } from '@/services/course-player.service';
+import { authService } from '@/services/auth.service';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
@@ -21,11 +22,27 @@ const CoursePlayer = () => {
   const [newQuestion, setNewQuestion] = useState('');
   const [quizAnswers, setQuizAnswers] = useState<Record<number, string>>({});
   const [quizChecked, setQuizChecked] = useState(false);
+  const [quizResults, setQuizResults] = useState<{passed: boolean, score: number, total: number} | null>(null);
+  const [userName, setUserName] = useState('User');
   
+  // Get course content
   const { data: courseContent, isLoading, error } = useQuery({
     queryKey: ['courseContent', courseId],
     queryFn: () => coursePlayerService.getCourseContent(courseId),
   });
+  
+  // Get course progress
+  const { data: courseProgress } = useQuery({
+    queryKey: ['courseProgress', courseId],
+    queryFn: () => coursePlayerService.getCourseProgress(courseId),
+    enabled: !!courseId,
+  });
+
+  // Get user name on component mount
+  useEffect(() => {
+    const name = authService.getUserName();
+    setUserName(name);
+  }, []);
 
   // Toggle section open/closed
   const toggleSection = (sectionId: string) => {
@@ -42,6 +59,7 @@ const CoursePlayer = () => {
     setCurrentLecture(lectureIndex);
     setQuizAnswers({});
     setQuizChecked(false);
+    setQuizResults(null);
   };
 
   // Current lecture data
@@ -103,8 +121,27 @@ const CoursePlayer = () => {
   };
 
   // Check quiz answers
-  const checkQuiz = () => {
+  const checkQuiz = async () => {
     setQuizChecked(true);
+    
+    const currentLectureData = getCurrentLecture();
+    if (!currentLectureData?.quiz) return;
+    
+    const correctAnswers = currentLectureData.quiz.questions.map(q => q.correctAnswer);
+    
+    const result = await coursePlayerService.submitQuizAnswers(
+      courseId,
+      currentSection,
+      currentLecture,
+      quizAnswers,
+      correctAnswers
+    );
+    
+    setQuizResults({
+      passed: result.passed,
+      score: result.score,
+      total: result.totalQuestions
+    });
   };
 
   // Calculate section duration
@@ -115,6 +152,18 @@ const CoursePlayer = () => {
     
     const totalMinutes = section.lectures.reduce((total, lecture) => total + lecture.duration, 0);
     return `${(totalMinutes / 60).toFixed(1)} hr`;
+  };
+
+  // Check if lecture is completed
+  const isLectureCompleted = (sectionIndex: number, lectureIndex: number): boolean => {
+    if (!courseProgress) return false;
+    return courseProgress.completedLectures.includes(`${sectionIndex}_${lectureIndex}`);
+  };
+
+  // Check if quiz is passed
+  const isQuizPassed = (sectionIndex: number, lectureIndex: number): boolean => {
+    if (!courseProgress) return false;
+    return courseProgress.quizzesPassed.includes(`${sectionIndex}_${lectureIndex}`);
   };
 
   // Initialize first section as open
@@ -129,6 +178,7 @@ const CoursePlayer = () => {
   if (!courseContent) return <div className="p-4">No course content available</div>;
 
   const currentLectureData = getCurrentLecture();
+  const completionPercentage = courseProgress?.completionPercentage || courseContent.completionPercentage;
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -138,7 +188,8 @@ const CoursePlayer = () => {
           <img src="/placeholder.svg" alt="CustomAcademy Logo" className="h-8 w-8" />
           <span className="font-semibold text-xl">CustomAcademy</span>
         </div>
-        <div>
+        <div className="flex items-center gap-4">
+          <span className="text-sm">Welcome, {userName}</span>
           <Button variant="default" size="sm" asChild>
             <a href="/index">My Courses</a>
           </Button>
@@ -184,30 +235,38 @@ const CoursePlayer = () => {
 
                 {openSections.includes(section.id) && (
                   <div className="ml-2 mt-1 space-y-1">
-                    {section.lectures.map((lecture, lIndex) => (
-                      <div 
-                        key={lecture.id}
-                        className={`
-                          flex items-center justify-between p-2 text-sm cursor-pointer rounded
-                          border-l-2 pl-3 hover:bg-muted
-                          ${currentSection === sIndex && currentLecture === lIndex
-                            ? "border-primary bg-muted/50"
-                            : "border-transparent"
-                          }
-                        `}
-                        onClick={() => selectLecture(sIndex, lIndex)}
-                      >
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          {lecture.completed ? (
-                            <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                          ) : (
-                            <Lock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                          )}
-                          <span className="truncate">{lecture.title}</span>
+                    {section.lectures.map((lecture, lIndex) => {
+                      const lectureCompleted = isLectureCompleted(sIndex, lIndex);
+                      const quizPassed = isQuizPassed(sIndex, lIndex);
+                      
+                      return (
+                        <div 
+                          key={lecture.id}
+                          className={`
+                            flex items-center justify-between p-2 text-sm cursor-pointer rounded
+                            border-l-2 pl-3 hover:bg-muted
+                            ${currentSection === sIndex && currentLecture === lIndex
+                              ? "border-primary bg-muted/50"
+                              : "border-transparent"
+                            }
+                          `}
+                          onClick={() => selectLecture(sIndex, lIndex)}
+                        >
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            {lectureCompleted ? (
+                              <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                            ) : (
+                              <Lock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            )}
+                            <span className="truncate">{lecture.title}</span>
+                            {lecture.quiz && quizPassed && (
+                              <span className="text-xs bg-green-100 text-green-800 px-1 rounded">Quiz Passed</span>
+                            )}
+                          </div>
+                          <span className="text-xs text-muted-foreground">{lecture.duration} min</span>
                         </div>
-                        <span className="text-xs text-muted-foreground">{lecture.duration} min</span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -233,10 +292,10 @@ const CoursePlayer = () => {
               <div className="bg-gray-200 h-2 w-36 rounded-full overflow-hidden">
                 <div 
                   className="bg-primary h-full" 
-                  style={{ width: `${courseContent.completionPercentage}%` }}
+                  style={{ width: `${completionPercentage}%` }}
                 ></div>
               </div>
-              <span className="text-sm">{courseContent.completionPercentage}% complete</span>
+              <span className="text-sm">{completionPercentage}% complete</span>
             </div>
           </div>
 
@@ -399,6 +458,17 @@ const CoursePlayer = () => {
             {currentLectureData?.quiz && currentLectureData.quiz.questions.length > 0 && (
               <div className="mt-8 bg-muted p-4 rounded-lg">
                 <h2 className="text-lg font-bold mb-4">Quiz for this Lecture</h2>
+                
+                {quizResults && (
+                  <div className={`mb-4 p-3 rounded-lg ${quizResults.passed ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                    <p className="font-medium">
+                      {quizResults.passed 
+                        ? `Congratulations! You passed the quiz (${quizResults.score}/${quizResults.total})` 
+                        : `You need to get at least 70% to pass. Your score: ${quizResults.score}/${quizResults.total}`}
+                    </p>
+                  </div>
+                )}
+                
                 <div className="space-y-4">
                   {currentLectureData.quiz.questions.map((question, qIndex) => (
                     <div key={qIndex} className="space-y-2">
@@ -440,6 +510,7 @@ const CoursePlayer = () => {
                 <Button 
                   onClick={checkQuiz} 
                   className="mt-4"
+                  disabled={Object.keys(quizAnswers).length !== currentLectureData.quiz.questions.length}
                 >
                   Submit Quiz
                 </Button>
@@ -450,15 +521,15 @@ const CoursePlayer = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-sidebar text-muted-foreground py-4 border-t">
+      <footer className="bg-sidebar text-muted-foreground py-2 border-t">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img src="/placeholder.svg" alt="Logo" className="h-6 w-6" />
-            <p className="text-sm">© 2025 CustomAcademy, Inc.</p>
+            <img src="/placeholder.svg" alt="Logo" className="h-4 w-4" />
+            <p className="text-xs">© 2025 CustomAcademy, Inc.</p>
           </div>
           <div className="flex gap-4">
-            <a href="#" className="text-sm hover:text-foreground">About Us</a>
-            <a href="#" className="text-sm hover:text-foreground">Contact Us</a>
+            <a href="#" className="text-xs hover:text-foreground">About Us</a>
+            <a href="#" className="text-xs hover:text-foreground">Contact Us</a>
           </div>
         </div>
       </footer>

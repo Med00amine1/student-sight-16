@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
@@ -32,18 +31,8 @@ const Login = () => {
       return;
     }
     
-    if (email.length > 30) {
-      setErrorMsg('Email must not exceed 30 characters.');
-      return;
-    }
-    
     if (password.length === 0) {
       setErrorMsg('Please enter a password.');
-      return;
-    }
-    
-    if (password.length > 8) {
-      setErrorMsg('Password must not exceed 8 characters.');
       return;
     }
     

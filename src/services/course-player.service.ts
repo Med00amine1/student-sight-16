@@ -1,4 +1,3 @@
-
 import { API_ENDPOINTS } from '@/config/api';
 import { apiClient } from './api.service';
 import { toast } from 'sonner';
@@ -51,6 +50,12 @@ export interface CourseContent {
   completionPercentage: number;
   lastWatchedSection?: number;
   lastWatchedLecture?: number;
+}
+
+export interface QuizResult {
+  passed: boolean;
+  score: number;
+  totalQuestions: number;
 }
 
 export const coursePlayerService = {
@@ -128,7 +133,7 @@ export const coursePlayerService = {
     lectureIndex: number, 
     answers: Record<number, string>,
     correctAnswers: string[]
-  ): Promise<void> {
+  ): Promise<QuizResult> {
     try {
       // Calculate score
       let score = 0;
@@ -139,7 +144,8 @@ export const coursePlayerService = {
         }
       });
 
-      await apiClient.post(`${API_ENDPOINTS.courses.getById(courseId)}/submit-quiz`, {
+      const result = await apiClient.post<{message: string, passed: boolean}>(API_ENDPOINTS.courses.submitQuiz(courseId), {
+        courseId,
         sectionIndex,
         lectureIndex,
         answers,
@@ -147,10 +153,25 @@ export const coursePlayerService = {
         totalQuestions: correctAnswers.length
       });
       
-      toast.success(`Quiz submitted: ${score}/${correctAnswers.length} correct`);
+      if (result.passed) {
+        toast.success(`Quiz passed: ${score}/${correctAnswers.length} correct`);
+      } else {
+        toast.info(`Quiz submitted: ${score}/${correctAnswers.length} correct. You need to score at least 70% to pass.`);
+      }
+      
+      return {
+        passed: result.passed,
+        score,
+        totalQuestions: correctAnswers.length
+      };
     } catch (error) {
       console.error('Error submitting quiz:', error);
       toast.error('Failed to submit quiz');
+      return {
+        passed: false,
+        score: 0,
+        totalQuestions: correctAnswers.length
+      };
     }
   },
 
@@ -191,6 +212,29 @@ export const coursePlayerService = {
       console.error('Error fetching certificate:', error);
       toast.error('Certificate not available yet');
       return '';
+    }
+  },
+
+  /**
+   * Get course progress
+   */
+  async getCourseProgress(courseId: string): Promise<{
+    completedLectures: string[];
+    completedSections: string[];
+    quizzesPassed: string[];
+    completionPercentage: number;
+  }> {
+    try {
+      const result = await apiClient.get(API_ENDPOINTS.courses.progress(courseId));
+      return result;
+    } catch (error) {
+      console.error('Error fetching course progress:', error);
+      return {
+        completedLectures: [],
+        completedSections: [],
+        quizzesPassed: [],
+        completionPercentage: 0
+      };
     }
   }
 };

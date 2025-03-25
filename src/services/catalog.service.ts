@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from '@/config/api';
 import { apiClient } from './api.service';
 import { toast } from 'sonner';
 import { courses } from '@/lib/mock-data'; // Import mock courses
+import { authService } from '@/services/auth.service';
 
 export interface CatalogCourse {
   id: string;
@@ -29,11 +30,13 @@ export interface CatalogSearchResult {
 
 // Convert mock courses to catalog courses
 const convertMockToCatalog = (): CatalogCourse[] => {
+  const userName = authService.getUserName();
+  
   return courses.map(course => ({
     id: course.id,
     title: course.title,
     description: course.description,
-    instructor: "John Doe",
+    instructor: userName || "John Doe",
     price: course.price || 49.99,
     originalPrice: course.originalPrice,
     rating: course.rating || 4.5,

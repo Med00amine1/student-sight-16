@@ -39,6 +39,10 @@ export const authService = {
     try {
       const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.auth.login, credentials);
       
+      if (!response || !response.token) {
+        throw new Error('Invalid response from server');
+      }
+      
       // Store token in localStorage for future requests
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
@@ -100,23 +104,40 @@ export const authService = {
     try {
       // First try to get from localStorage to avoid unnecessary API calls
       const userJson = localStorage.getItem('user');
-      if (userJson) {
+      const token = localStorage.getItem('token');
+      
+      if (userJson && token) {
         return JSON.parse(userJson);
       }
       
-      // If not in localStorage, fetch from API
-      const user = await apiClient.get<User>(API_ENDPOINTS.auth.me);
-      
-      // Update localStorage with latest data
-      if (user) {
-        localStorage.setItem('user', JSON.stringify(user));
+      // If not in localStorage or no token, fetch from API
+      if (token) {
+        const user = await apiClient.get<User>(API_ENDPOINTS.auth.me);
+        
+        // Update localStorage with latest data
+        if (user) {
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+        
+        return user;
       }
       
-      return user;
+      return null;
     } catch (error) {
       console.error('Failed to get current user:', error);
       return null;
     }
+  },
+
+  /**
+   * Get user's full name
+   */
+  getUserName(): string {
+    const userJson = localStorage.getItem('user');
+    if (!userJson) return 'User';
+    
+    const user = JSON.parse(userJson) as User;
+    return user.name || 'User';
   },
 
   /**
