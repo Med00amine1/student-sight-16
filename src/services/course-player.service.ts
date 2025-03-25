@@ -1,3 +1,4 @@
+
 import { API_ENDPOINTS } from '@/config/api';
 import { apiClient } from './api.service';
 import { toast } from 'sonner';
@@ -229,6 +230,7 @@ export const coursePlayerService = {
       return result;
     } catch (error) {
       console.error('Error fetching course progress:', error);
+      // Return default values instead of empty object to match the expected return type
       return {
         completedLectures: [],
         completedSections: [],
