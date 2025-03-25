@@ -1,3 +1,4 @@
+
 export interface Course {
   id: string;
   title: string;
@@ -6,6 +7,10 @@ export interface Course {
   status: 'active' | 'draft';
   enrolled: number;
   cover: string;
+  price?: number;
+  originalPrice?: number;
+  rating?: number;
+  reviewCount?: number;
 }
 
 export interface Student {
@@ -33,7 +38,11 @@ export const courses: Course[] = [
     category: "Development",
     status: "active",
     enrolled: 128,
-    cover: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=200&auto=format&fit=crop"
+    cover: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=200&auto=format&fit=crop",
+    price: 49.99,
+    originalPrice: 99.99,
+    rating: 4.7,
+    reviewCount: 87
   },
   {
     id: "c2",
@@ -42,7 +51,11 @@ export const courses: Course[] = [
     category: "Development",
     status: "active",
     enrolled: 87,
-    cover: "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?q=80&w=200&auto=format&fit=crop"
+    cover: "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?q=80&w=200&auto=format&fit=crop",
+    price: 69.99,
+    originalPrice: 129.99,
+    rating: 4.8,
+    reviewCount: 56
   },
   {
     id: "c3",
@@ -51,7 +64,11 @@ export const courses: Course[] = [
     category: "Design",
     status: "draft",
     enrolled: 0,
-    cover: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=200&auto=format&fit=crop"
+    cover: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=200&auto=format&fit=crop",
+    price: 59.99,
+    originalPrice: 79.99,
+    rating: 4.5,
+    reviewCount: 34
   },
   {
     id: "c4",
@@ -60,7 +77,37 @@ export const courses: Course[] = [
     category: "Data Science",
     status: "active",
     enrolled: 56,
-    cover: "https://images.unsplash.com/photo-1551033406-611cf9a28f67?q=80&w=200&auto=format&fit=crop"
+    cover: "https://images.unsplash.com/photo-1551033406-611cf9a28f67?q=80&w=200&auto=format&fit=crop",
+    price: 79.99,
+    originalPrice: 149.99,
+    rating: 4.9,
+    reviewCount: 103
+  },
+  {
+    id: "c5",
+    title: "Mobile App Development with Flutter",
+    description: "Build cross-platform mobile applications with Google's Flutter framework.",
+    category: "Development",
+    status: "active",
+    enrolled: 42,
+    cover: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=200&auto=format&fit=crop",
+    price: 64.99,
+    originalPrice: 119.99,
+    rating: 4.6,
+    reviewCount: 68
+  },
+  {
+    id: "c6",
+    title: "DevOps Fundamentals",
+    description: "Learn CI/CD, containerization, and infrastructure as code for modern application deployment.",
+    category: "DevOps",
+    status: "active",
+    enrolled: 35,
+    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=200&auto=format&fit=crop",
+    price: 89.99,
+    originalPrice: 159.99,
+    rating: 4.7,
+    reviewCount: 47
   }
 ];
 

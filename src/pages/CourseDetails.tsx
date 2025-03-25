@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,6 @@ export default function CourseDetails() {
   const [sections, setSections] = useState<CourseSection[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
-  // Mock sections for UI demonstration
   const mockSections: CourseSection[] = [
     {
       title: "Project Introduction",
@@ -75,7 +73,6 @@ export default function CourseDetails() {
     }
   ];
 
-  // Mock instructor data
   const mockInstructor: Instructor = {
     name: "Richard James",
     bio: "Senior Developer with 10+ years of experience in full-stack development. Specialized in React and Node.js applications.",
@@ -98,7 +95,22 @@ export default function CourseDetails() {
       setIsLoading(true);
       try {
         const courseData = await catalogService.getCourseById(id);
-        setCourse(courseData);
+        
+        if (courseData) {
+          setCourse(courseData);
+        } else {
+          const fallbackCourse = await courseService.getCourseById(id);
+          if (fallbackCourse) {
+            setCourse({
+              ...fallbackCourse,
+              price: 49.99,
+              originalPrice: 99.99,
+              rating: 4.5,
+              reviewCount: 120
+            });
+          }
+        }
+        
         setSections(mockSections); // Using mock sections for demonstration
       } catch (error) {
         console.error("Error fetching course:", error);
@@ -121,7 +133,6 @@ export default function CourseDetails() {
       return;
     }
     
-    // Navigate to payment page with course data
     navigate(`/payment/${id}`);
   };
   
@@ -160,7 +171,7 @@ export default function CourseDetails() {
           <div className="mt-2 flex items-center">
             <span className="text-yellow-400">{"★".repeat(Math.round(course.rating))}</span>
             <span className="text-gray-400 ml-2">({course.reviewCount} ratings)</span>
-            <span className="text-gray-400 ml-4">{course.students || 0} students</span>
+            <span className="text-gray-400 ml-4">{course.enrolledCount || course.enrolled || 0} students</span>
           </div>
           <p className="text-gray-400 mt-2">Course by <span className="text-blue-400">{mockInstructor.name}</span></p>
           <p className="text-gray-400 text-sm">{mockInstructor.bio}</p>
