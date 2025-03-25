@@ -230,7 +230,7 @@ export const coursePlayerService = {
       return result;
     } catch (error) {
       console.error('Error fetching course progress:', error);
-      // Return default values instead of empty object to match the expected return type
+      // Return default values with the correct structure instead of an empty object
       return {
         completedLectures: [],
         completedSections: [],
