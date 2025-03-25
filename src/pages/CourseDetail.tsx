@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Course, fetchCourseById } from "@/lib/mock-data";
+import { Course } from "@/lib/mock-data";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,10 +13,12 @@ import {
   BarChart4,
   Edit 
 } from "lucide-react";
+import { courseService } from "@/services";
+import { toast } from "sonner";
 
 export default function CourseDetail() {
   const { id } = useParams<{ id: string }>();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,11 +28,11 @@ export default function CourseDetail() {
       
       try {
         setLoading(true);
-        const data = await fetchCourseById(id);
+        const data = await courseService.getCourseById(id);
         setCourse(data);
       } catch (error) {
         console.error("Failed to load course:", error);
-        toast({
+        uiToast({
           title: "Error",
           description: "Failed to load course details. Please try again.",
           variant: "destructive"
@@ -42,7 +43,7 @@ export default function CourseDetail() {
     };
     
     loadCourse();
-  }, [id, toast]);
+  }, [id, uiToast]);
 
   if (loading) {
     return (
