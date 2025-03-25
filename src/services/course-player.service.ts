@@ -49,6 +49,8 @@ export interface CourseContent {
     date: string;
   }[];
   completionPercentage: number;
+  lastWatchedSection?: number;
+  lastWatchedLecture?: number;
 }
 
 export const coursePlayerService = {
@@ -115,6 +117,81 @@ export const coursePlayerService = {
       console.error('Error submitting question:', error);
       toast.error('Failed to submit question');
     }
+  },
+
+  /**
+   * Submit quiz answers for a lecture
+   */
+  async submitQuizAnswers(
+    courseId: string, 
+    sectionIndex: number, 
+    lectureIndex: number, 
+    answers: Record<number, string>,
+    correctAnswers: string[]
+  ): Promise<void> {
+    try {
+      // Calculate score
+      let score = 0;
+      Object.keys(answers).forEach((qIndex) => {
+        const index = parseInt(qIndex);
+        if (answers[index] === correctAnswers[index]) {
+          score++;
+        }
+      });
+
+      await apiClient.post(`${API_ENDPOINTS.courses.getById(courseId)}/submit-quiz`, {
+        sectionIndex,
+        lectureIndex,
+        answers,
+        score,
+        totalQuestions: correctAnswers.length
+      });
+      
+      toast.success(`Quiz submitted: ${score}/${correctAnswers.length} correct`);
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      toast.error('Failed to submit quiz');
+    }
+  },
+
+  /**
+   * Track video progress
+   */
+  async trackVideoProgress(
+    courseId: string,
+    sectionIndex: number,
+    lectureIndex: number,
+    currentTime: number,
+    duration: number
+  ): Promise<void> {
+    try {
+      const progressPercent = Math.floor((currentTime / duration) * 100);
+      
+      await apiClient.post(`${API_ENDPOINTS.courses.getById(courseId)}/track-progress`, {
+        sectionIndex,
+        lectureIndex,
+        progressPercent
+      });
+      
+      // No toast notification for tracking progress as it would be too frequent
+    } catch (error) {
+      console.error('Error tracking progress:', error);
+      // Silent failure for progress tracking
+    }
+  },
+
+  /**
+   * Get course completion certificate if available
+   */
+  async getCertificate(courseId: string): Promise<string> {
+    try {
+      const result = await apiClient.get<{ certificateUrl: string }>(`${API_ENDPOINTS.courses.getById(courseId)}/certificate`);
+      return result.certificateUrl;
+    } catch (error) {
+      console.error('Error fetching certificate:', error);
+      toast.error('Certificate not available yet');
+      return '';
+    }
   }
 };
 
@@ -124,6 +201,8 @@ function getMockCourseContent(courseId: string): CourseContent {
     id: courseId,
     title: "Python Mastery Course",
     completionPercentage: 35,
+    lastWatchedSection: 0,
+    lastWatchedLecture: 1,
     sections: [
       {
         id: "s1",

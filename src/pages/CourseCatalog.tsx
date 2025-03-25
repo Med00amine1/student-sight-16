@@ -14,10 +14,10 @@ export default function CourseCatalog() {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
   
-  // Fetch all courses for catalog - fixed method name to getAllCourses
+  // Fetch all courses for catalog - fixed method name and queryFn implementation
   const { data: allCourses, isLoading, error } = useQuery({
     queryKey: ['catalogCourses'],
-    queryFn: catalogService.getAllCourses,
+    queryFn: () => catalogService.getAllCourses(),
   });
   
   // Filtered courses based on search

@@ -22,6 +22,14 @@ export const API_ENDPOINTS = {
     purchased: `${API_BASE_URL}/courses/purchased`,
     enroll: (id: string) => `${API_BASE_URL}/courses/${id}/enroll`,
     content: (id: string) => `${API_BASE_URL}/courses/${id}/content`,
+    
+    // Course player specific endpoints
+    completeLecture: (id: string) => `${API_BASE_URL}/courses/${id}/complete-lecture`,
+    saveNotes: (id: string) => `${API_BASE_URL}/courses/${id}/save-notes`,
+    askQuestion: (id: string) => `${API_BASE_URL}/courses/${id}/ask-question`,
+    submitQuiz: (id: string) => `${API_BASE_URL}/courses/${id}/submit-quiz`,
+    trackProgress: (id: string) => `${API_BASE_URL}/courses/${id}/track-progress`,
+    getCertificate: (id: string) => `${API_BASE_URL}/courses/${id}/certificate`,
   },
   students: {
     getAll: `${API_BASE_URL}/students`,

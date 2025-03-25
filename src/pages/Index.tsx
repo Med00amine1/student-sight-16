@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, User, Menu } from "lucide-react";
 import { toast } from "sonner";
@@ -19,20 +19,18 @@ interface Course {
   category: string;
 }
 
-const Index = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showMenu, setShowMenu] = useState(false);
+export default function Index() {
   const [user, setUser] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
   const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
   const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  
   const navigate = useNavigate();
   
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get current user
+        // Fetch user data
         const userData = await authService.getCurrentUser();
         setUser(userData);
         
@@ -46,8 +44,6 @@ const Index = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to load course data");
-      } finally {
-        setLoading(false);
       }
     };
     
@@ -292,6 +288,4 @@ const Index = () => {
       </footer>
     </div>
   );
-};
-
-export default Index;
+}
