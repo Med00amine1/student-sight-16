@@ -15,6 +15,7 @@ import MyCourses from "@/pages/MyCourses";
 import CourseDetail from "@/pages/CourseDetail";
 import CourseDetails from "@/pages/CourseDetails";
 import CoursePlayer from "@/pages/CoursePlayer";
+import Payment from "@/pages/Payment";
 import StudentsEnrolled from "@/pages/StudentsEnrolled";
 import CourseCatalog from "@/pages/CourseCatalog";
 import NotFound from "@/pages/NotFound";
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/course-details/:id" element={<CourseDetails />} />
+          <Route path="/payment/:id" element={<Payment />} />
           
           {/* Authenticated user routes */}
           <Route path="/index" element={
