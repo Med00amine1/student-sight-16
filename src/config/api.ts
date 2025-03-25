@@ -22,6 +22,7 @@ export const API_ENDPOINTS = {
     purchased: `${API_BASE_URL}/courses/purchased`,
     enroll: (id: string) => `${API_BASE_URL}/courses/${id}/enroll`,
     content: (id: string) => `${API_BASE_URL}/courses/${id}/content`,
+    instructor: `${API_BASE_URL}/courses/instructor`,
     
     // Course player specific endpoints
     completeLecture: (id: string) => `${API_BASE_URL}/courses/${id}/complete-lecture`,
@@ -30,10 +31,7 @@ export const API_ENDPOINTS = {
     submitQuiz: (id: string) => `${API_BASE_URL}/courses/${id}/submit-quiz`,
     trackProgress: (id: string) => `${API_BASE_URL}/courses/${id}/track-progress`,
     getCertificate: (id: string) => `${API_BASE_URL}/courses/${id}/certificate`,
-    sections: (id: string) => `${API_BASE_URL}/courses/${id}/sections`,
-    lectures: (id: string, sectionId: string) => `${API_BASE_URL}/courses/${id}/sections/${sectionId}/lectures`,
-    markCompleted: (id: string, lectureId: string) => `${API_BASE_URL}/courses/${id}/lectures/${lectureId}/complete`,
-    courseProgress: (id: string) => `${API_BASE_URL}/courses/${id}/progress`,
+    progress: (id: string) => `${API_BASE_URL}/courses/${id}/progress`,
   },
   students: {
     getAll: `${API_BASE_URL}/students`,
@@ -47,7 +45,9 @@ export const API_ENDPOINTS = {
     search: (query: string) => `${API_BASE_URL}/catalog/search?q=${encodeURIComponent(query)}`,
     featured: `${API_BASE_URL}/catalog/featured`,
     recommended: `${API_BASE_URL}/catalog/recommended`,
-    details: (id: string) => `${API_BASE_URL}/catalog/courses/${id}`,
+  },
+  payment: {
+    createCheckoutSession: `${API_BASE_URL}/payment/create-checkout-session`,
   }
 };
 

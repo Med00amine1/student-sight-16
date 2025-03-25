@@ -1,69 +1,118 @@
-# Welcome to your Lovable project
 
-## Project info
+# Course Platform Backend
 
-**URL**: https://lovable.dev/projects/afbd5417-9b91-46d9-b385-3a7dcde30abf
+This is a Flask backend for a course platform similar to Udemy. It provides all the necessary API endpoints for the frontend to interact with.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- User authentication (register, login, logout)
+- Course management
+- Enrollment system
+- Quiz functionality
+- Progress tracking
+- Search functionality
+- Payment processing (mock implementation)
+- Teacher dashboard with metrics
 
-**Use Lovable**
+## Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/afbd5417-9b91-46d9-b385-3a7dcde30abf) and start prompting.
+- Python 3.7 or higher
+- Flask
 
-Changes made via Lovable will be committed automatically to this repo.
+## Installation
 
-**Use your preferred IDE**
+1. Clone the repository
+2. Create a virtual environment:
+   ```
+   python -m venv env
+   ```
+3. Activate the virtual environment:
+   - On Windows:
+     ```
+     .\env\Scripts\activate
+     ```
+   - On macOS/Linux:
+     ```
+     source env/bin/activate
+     ```
+4. Install the required packages:
+   ```
+   pip install flask flask-cors werkzeug
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Running the Application
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Run the Flask application:
+   ```
+   python app.py
+   ```
+2. The API will be available at `http://localhost:5000`
 
-Follow these steps:
+## Demo Users
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+The following demo users are created automatically:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. Teacher account:
+   - Email: admin@example.com
+   - Password: admin123
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. Student account:
+   - Email: student@example.com
+   - Password: student123
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## API Documentation
 
-**Edit a file directly in GitHub**
+### Authentication Endpoints
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **POST /api/auth/register** - Register a new user
+- **POST /api/auth/login** - Login an existing user
+- **POST /api/auth/logout** - Logout the current user
+- **GET /api/auth/me** - Get the current user's information
+- **POST /api/auth/switch-mode** - Switch between student and teacher modes
 
-**Use GitHub Codespaces**
+### Course Endpoints
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **GET /api/courses** - Get all courses
+- **GET /api/courses/:id** - Get a course by ID
+- **POST /api/courses** - Create a new course
+- **PUT /api/courses/:id** - Update a course
+- **DELETE /api/courses/:id** - Delete a course
+- **POST /api/courses/:id/enroll** - Enroll in a course
+- **GET /api/courses/purchased** - Get all purchased courses
 
-## What technologies are used for this project?
+### Course Content and Progress Endpoints
 
-This project is built with .
+- **GET /api/courses/:id/content** - Get course content
+- **GET /api/courses/:id/progress** - Get course progress
+- **POST /api/courses/:id/complete-lecture** - Mark a lecture as completed
+- **POST /api/courses/:id/save-notes** - Save notes for a lecture
+- **POST /api/courses/:id/ask-question** - Ask a question about a lecture
+- **POST /api/courses/:id/submit-quiz** - Submit quiz answers
+- **POST /api/courses/:id/track-progress** - Track video progress
+- **GET /api/courses/:id/certificate** - Get a course completion certificate
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Catalog and Search Endpoints
 
-## How can I deploy this project?
+- **GET /api/catalog/courses** - Get all catalog courses
+- **GET /api/catalog/search** - Search for courses
+- **GET /api/catalog/featured** - Get featured courses
+- **GET /api/catalog/recommended** - Get recommended courses
 
-Simply open [Lovable](https://lovable.dev/projects/afbd5417-9b91-46d9-b385-3a7dcde30abf) and click on Share -> Publish.
+### Teacher Dashboard Endpoints
 
-## I want to use a custom domain - is that possible?
+- **GET /api/courses/instructor** - Get all courses by the current instructor
+- **GET /api/courses/:id/students** - Get all students enrolled in a course
+- **GET /api/metrics** - Get teacher metrics
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### Payment Endpoints
+
+- **POST /api/payment/create-checkout-session** - Create a new checkout session
+
+## Data Storage
+
+Data is stored in JSON files in the `data` directory:
+
+- `users.json` - User information
+- `courses.json` - Course information
+- `enrollments.json` - Enrollment information
+- `progress.json` - Course progress information

@@ -21,7 +21,14 @@ import CourseCatalog from "@/pages/CourseCatalog";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -36,6 +43,7 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/course-details/:id" element={<CourseDetails />} />
           <Route path="/payment/:id" element={<Payment />} />
+          <Route path="/catalog" element={<CourseCatalog />} />
           
           {/* Authenticated user routes */}
           <Route path="/index" element={
@@ -62,7 +70,6 @@ const App = () => (
             <Route path="/my-courses" element={<MyCourses />} />
             <Route path="/course/:id" element={<CourseDetail />} />
             <Route path="/students" element={<StudentsEnrolled />} />
-            <Route path="/catalog" element={<CourseCatalog />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />
