@@ -1,5 +1,5 @@
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
@@ -8,10 +8,12 @@ import {
   Users, 
   ChevronLeft, 
   ChevronRight,
-  ShoppingBag
+  ShoppingBag,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { authService } from "@/services/auth.service";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -48,6 +50,7 @@ const NavItem = ({ icon, label, href, isActive, isCollapsed }: NavItemProps) => 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   const navItems = [
     { 
@@ -76,6 +79,11 @@ export function Sidebar() {
       href: "/catalog"
     }
   ];
+
+  const handleBackToStudentView = () => {
+    authService.switchToStudentMode();
+    navigate('/index');
+  };
 
   return (
     <div className={cn(
@@ -113,6 +121,24 @@ export function Sidebar() {
             isCollapsed={collapsed}
           />
         ))}
+        
+        {/* Student View Link */}
+        <div className="mt-4 pt-4 border-t border-sidebar-border">
+          <button
+            onClick={handleBackToStudentView}
+            className="flex items-center gap-3 px-3 py-2 w-full rounded-md transition-all duration-200 text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+          >
+            <div className="flex items-center justify-center w-6 h-6">
+              <User size={18} />
+            </div>
+            <span className={cn(
+              "transition-all duration-200", 
+              collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            )}>
+              Student View
+            </span>
+          </button>
+        </div>
       </div>
       
       <div className="p-4 border-t border-sidebar-border">

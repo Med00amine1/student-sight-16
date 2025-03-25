@@ -8,6 +8,7 @@ export const API_BASE_URL = "http://localhost:5000/api";
 export const API_ENDPOINTS = {
   auth: {
     login: `${API_BASE_URL}/auth/login`,
+    register: `${API_BASE_URL}/auth/register`,
     logout: `${API_BASE_URL}/auth/logout`,
     me: `${API_BASE_URL}/auth/me`,
   },
@@ -17,6 +18,7 @@ export const API_ENDPOINTS = {
     create: `${API_BASE_URL}/courses`,
     update: (id: string) => `${API_BASE_URL}/courses/${id}`,
     delete: (id: string) => `${API_BASE_URL}/courses/${id}`,
+    purchased: `${API_BASE_URL}/courses/purchased`,
   },
   students: {
     getAll: `${API_BASE_URL}/students`,
@@ -28,6 +30,8 @@ export const API_ENDPOINTS = {
   catalog: {
     getAll: `${API_BASE_URL}/catalog/courses`,
     search: (query: string) => `${API_BASE_URL}/catalog/search?q=${encodeURIComponent(query)}`,
+    featured: `${API_BASE_URL}/catalog/featured`,
+    recommended: `${API_BASE_URL}/catalog/recommended`,
   }
 };
 

@@ -2,17 +2,19 @@
 import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ReactNode } from "react";
 
 interface HeaderProps {
   title: string;
+  children?: ReactNode;
 }
 
-export function Header({ title }: HeaderProps) {
+export function Header({ title, children }: HeaderProps) {
   return (
-    <header className="border-b border-border py-4 px-6 bg-white flex items-center justify-between">
+    <header className="border-b border-border py-4 px-6 bg-white flex items-center">
       <h1 className="text-xl font-medium">{title}</h1>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 ml-auto">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
           <Input 
@@ -31,6 +33,8 @@ export function Header({ title }: HeaderProps) {
             <span className="font-medium text-gray-700">T</span>
           </div>
         </div>
+        
+        {children}
       </div>
     </header>
   );

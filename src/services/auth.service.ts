@@ -9,6 +9,8 @@ export interface User {
   email: string;
   role: 'student' | 'instructor' | 'admin';
   profilePicture?: string;
+  purchasedCourses?: string[]; // IDs of courses the user has purchased
+  isTeacher: boolean; // Flag to check if user has teacher access
 }
 
 interface LoginResponse {
@@ -17,6 +19,12 @@ interface LoginResponse {
 }
 
 interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+interface RegisterRequest {
+  name: string;
   email: string;
   password: string;
 }
@@ -34,11 +42,31 @@ export const authService = {
       
       // Store token in localStorage for future requests
       localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
       
       return response.user;
     } catch (error) {
       console.error('Login failed:', error);
       toast.error('Login failed. Please check your credentials.');
+      throw error;
+    }
+  },
+
+  /**
+   * Register a new user
+   */
+  async register(userData: RegisterRequest): Promise<User> {
+    try {
+      const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.auth.register, userData);
+      
+      // Automatically log in the user after registration
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      return response.user;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      toast.error('Registration failed. Please try again.');
       throw error;
     }
   },
@@ -54,6 +82,7 @@ export const authService = {
     } finally {
       // Always clear local storage even if the API call fails
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
   },
 
@@ -62,7 +91,21 @@ export const authService = {
    */
   async getCurrentUser(): Promise<User | null> {
     try {
-      return await apiClient.get<User>(API_ENDPOINTS.auth.me);
+      // First try to get from localStorage to avoid unnecessary API calls
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        return JSON.parse(userJson);
+      }
+      
+      // If not in localStorage, fetch from API
+      const user = await apiClient.get<User>(API_ENDPOINTS.auth.me);
+      
+      // Update localStorage with latest data
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      
+      return user;
     } catch (error) {
       console.error('Failed to get current user:', error);
       return null;
@@ -74,8 +117,39 @@ export const authService = {
    */
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
+  },
+  
+  /**
+   * Check if current user has teacher role
+   */
+  isTeacher(): boolean {
+    const userJson = localStorage.getItem('user');
+    if (!userJson) return false;
+    
+    const user = JSON.parse(userJson) as User;
+    return user.isTeacher || user.role === 'instructor' || user.role === 'admin';
+  },
+  
+  /**
+   * Switch between student and teacher mode
+   * This doesn't actually change the user's role, just their current view
+   */
+  switchToTeacherMode(): void {
+    const userJson = localStorage.getItem('user');
+    if (!userJson) return;
+    
+    const user = JSON.parse(userJson) as User;
+    localStorage.setItem('viewMode', 'teacher');
+  },
+  
+  switchToStudentMode(): void {
+    localStorage.setItem('viewMode', 'student');
+  },
+  
+  /**
+   * Get current view mode (teacher or student)
+   */
+  getCurrentViewMode(): 'teacher' | 'student' {
+    return localStorage.getItem('viewMode') as 'teacher' | 'student' || 'student';
   }
 };
-
-// Add to index.ts to make it available through barrel export
-export * from './auth.service';
