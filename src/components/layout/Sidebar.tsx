@@ -7,7 +7,8 @@ import {
   BookOpen, 
   Users, 
   ChevronLeft, 
-  ChevronRight
+  ChevronRight,
+  ShoppingBag
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -52,7 +53,7 @@ export function Sidebar() {
     { 
       icon: <LayoutDashboard size={18} />, 
       label: "Dashboard", 
-      href: "/" 
+      href: "/dashboard" 
     },
     { 
       icon: <BookPlus size={18} />, 
@@ -69,6 +70,11 @@ export function Sidebar() {
       label: "Students Enrolled", 
       href: "/students" 
     },
+    {
+      icon: <ShoppingBag size={18} />,
+      label: "Course Catalog",
+      href: "/catalog"
+    }
   ];
 
   return (
@@ -82,9 +88,9 @@ export function Sidebar() {
           collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
         )}>
           <div className="w-8 h-8 rounded-full bg-sidebar-primary/20 flex items-center justify-center">
-            <span className="font-bold text-sidebar-primary text-sm">CS</span>
+            <span className="font-bold text-sidebar-primary text-sm">CA</span>
           </div>
-          <span className="font-medium text-sidebar-foreground">CourseSync</span>
+          <span className="font-medium text-sidebar-foreground">CustomAcademy</span>
         </div>
         <Button 
           variant="ghost" 

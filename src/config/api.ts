@@ -6,6 +6,11 @@ export const API_BASE_URL = "http://localhost:5000/api";
 
 // API endpoints
 export const API_ENDPOINTS = {
+  auth: {
+    login: `${API_BASE_URL}/auth/login`,
+    logout: `${API_BASE_URL}/auth/logout`,
+    me: `${API_BASE_URL}/auth/me`,
+  },
   courses: {
     getAll: `${API_BASE_URL}/courses`,
     getById: (id: string) => `${API_BASE_URL}/courses/${id}`,
