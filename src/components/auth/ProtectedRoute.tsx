@@ -20,9 +20,15 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   // If specific role is required, verify it
   if (requiredRole) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.role !== requiredRole && 
-        !(requiredRole === 'instructor' && user.isTeacher)) {
-      // If trying to access teacher pages but user is not a teacher
+    
+    // Check if user has required role
+    // For instructor role, also allow if isTeacher flag is true
+    const hasRequiredRole = 
+      user.role === requiredRole || 
+      (requiredRole === 'instructor' && user.isTeacher === true);
+      
+    if (!hasRequiredRole) {
+      // If trying to access teacher pages but user is not a teacher, redirect to student index
       return <Navigate to="/index" replace />;
     }
   }

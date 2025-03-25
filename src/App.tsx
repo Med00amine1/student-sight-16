@@ -13,6 +13,7 @@ import Dashboard from "@/pages/Dashboard";
 import AddCourse from "@/pages/AddCourse";
 import MyCourses from "@/pages/MyCourses";
 import CourseDetail from "@/pages/CourseDetail";
+import CoursePlayer from "@/pages/CoursePlayer";
 import StudentsEnrolled from "@/pages/StudentsEnrolled";
 import CourseCatalog from "@/pages/CourseCatalog";
 import NotFound from "@/pages/NotFound";
@@ -36,6 +37,13 @@ const App = () => (
           <Route path="/index" element={
             <ProtectedRoute>
               <Index />
+            </ProtectedRoute>
+          } />
+          
+          {/* Course player route */}
+          <Route path="/course-player/:courseId" element={
+            <ProtectedRoute>
+              <CoursePlayer />
             </ProtectedRoute>
           } />
           

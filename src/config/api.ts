@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
     register: `${API_BASE_URL}/auth/register`,
     logout: `${API_BASE_URL}/auth/logout`,
     me: `${API_BASE_URL}/auth/me`,
+    switchMode: `${API_BASE_URL}/auth/switch-mode`,
   },
   courses: {
     getAll: `${API_BASE_URL}/courses`,
@@ -19,6 +20,8 @@ export const API_ENDPOINTS = {
     update: (id: string) => `${API_BASE_URL}/courses/${id}`,
     delete: (id: string) => `${API_BASE_URL}/courses/${id}`,
     purchased: `${API_BASE_URL}/courses/purchased`,
+    enroll: (id: string) => `${API_BASE_URL}/courses/${id}/enroll`,
+    content: (id: string) => `${API_BASE_URL}/courses/${id}/content`,
   },
   students: {
     getAll: `${API_BASE_URL}/students`,
