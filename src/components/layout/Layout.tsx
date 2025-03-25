@@ -24,6 +24,9 @@ export function Layout() {
       case location.pathname === "/students":
         setPageTitle("Students Enrolled");
         break;
+      case location.pathname === "/catalog":
+        setPageTitle("Course Catalog");
+        break;
       case location.pathname.startsWith("/course/"):
         setPageTitle("Course Details");
         break;

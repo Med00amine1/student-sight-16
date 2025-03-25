@@ -19,6 +19,10 @@ export const API_ENDPOINTS = {
   },
   metrics: {
     getAll: `${API_BASE_URL}/metrics`,
+  },
+  catalog: {
+    getAll: `${API_BASE_URL}/catalog/courses`,
+    search: (query: string) => `${API_BASE_URL}/catalog/search?q=${encodeURIComponent(query)}`,
   }
 };
 
