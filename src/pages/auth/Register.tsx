@@ -3,143 +3,186 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { authService } from '@/services/auth.service';
-import { Checkbox } from '@/components/ui/checkbox';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [becomeTeacher, setBecomeTeacher] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  
+  const isValidEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name || !email || !password) {
-      toast.error('Please fill out all required fields');
+    // Client-side validation
+    if (name.length === 0 || name.length > 24) {
+      toast.error('Full Name must be between 1 and 24 characters.');
+      return;
+    }
+    
+    if (!isValidEmail(email)) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+    
+    if (email.length > 34) {
+      toast.error('Email must not exceed 34 characters.');
+      return;
+    }
+    
+    if (password.length === 0 || password.length > 8) {
+      toast.error('Password must be 1-8 characters long.');
       return;
     }
     
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error('Passwords do not match.');
       return;
     }
     
     setIsLoading(true);
     
     try {
-      await authService.register({ 
-        name, 
-        email, 
-        password,
-        // In a real app, you'd handle the teacher request differently
-        // For now, we'll assume this is just stored in the user profile
-        // isTeacher: becomeTeacher 
-      });
-      
+      await authService.register({ name, email, password });
       toast.success('Registration successful!');
       navigate('/index');
     } catch (error) {
       console.error('Registration error:', error);
+      toast.error('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
   
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-gray-800 text-white border-gray-700">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <p className="text-gray-400">Enter your details to get started</p>
-        </CardHeader>
-        
-        <CardContent>
+    <div className="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
+      {/* Navbar */}
+      <nav className="flex justify-between items-center p-3 bg-gray-800">
+        <div className="flex items-center">
+          <img
+            src="/placeholder.svg"
+            alt="Logo"
+            width="150"
+            className="mr-2"
+          />
+          <Link to="/" className="text-white ml-2">CustomAcademy</Link>
+        </div>
+      </nav>
+
+      {/* Sign Up Form */}
+      <div className="flex justify-center items-center flex-grow px-4">
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full transition-transform duration-300 transform hover:shadow-2xl hover:scale-[1.02]">
+          <h2 className="text-3xl font-semibold mb-4 text-center tracking-wide">Sign Up</h2>
+          <p className="text-center mb-4 text-gray-400">Create a free account with your email</p>
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">Full Name</label>
+            <div>
+              <label htmlFor="full-name" className="block text-sm font-medium text-gray-300">Full Name</label>
               <Input
-                id="name"
-                placeholder="John Doe"
+                id="full-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white"
+                placeholder="Enter full name"
+                maxLength={24}
                 required
+                className="w-full p-3 mt-1 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-300"
               />
             </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">Email</label>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email</label>
               <Input
                 id="email"
                 type="email"
-                placeholder="your.email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white"
+                placeholder="Enter your email"
+                maxLength={34}
                 required
+                className="w-full p-3 mt-1 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-300"
               />
             </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">Password</label>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300">Password</label>
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white"
+                placeholder="Enter your password"
+                maxLength={8}
                 required
+                className="w-full p-3 mt-1 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-300"
               />
             </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
+
+            <div>
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-300">Confirm Password</label>
               <Input
-                id="confirmPassword"
+                id="confirm-password"
                 type="password"
-                placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white"
+                placeholder="Confirm your password"
+                maxLength={8}
                 required
+                className="w-full p-3 mt-1 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-300"
               />
             </div>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="becomeTeacher" 
-                checked={becomeTeacher}
-                onCheckedChange={(checked) => setBecomeTeacher(checked as boolean)}
-              />
-              <label htmlFor="becomeTeacher" className="text-sm font-medium">
-                I want to teach on CustomAcademy
-              </label>
+
+            <div className="flex justify-center">
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full py-6 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-300 transition transform hover:scale-105"
+              >
+                {isLoading ? 'Signing Up...' : 'Sign Up'}
+              </Button>
             </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Creating account...' : 'Create Account'}
-            </Button>
           </form>
-        </CardContent>
-        
-        <CardFooter className="text-center">
-          <p className="text-sm text-gray-400 w-full">
-            Already have an account?{' '}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300">Sign in</Link>
+
+          <p className="text-center mt-4 text-sm text-gray-400">
+            Have an account?{' '}
+            <Link to="/login" className="text-blue-500 hover:text-blue-400">Log In</Link>
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-gray-400 py-6 mt-auto">
+        <div className="container mx-auto flex justify-between px-4">
+          <div className="flex items-center">
+            <img src="/placeholder.svg" alt="Logo" className="w-12 h-auto mr-2" />
+            <p>© 2025 CustomAcademy, Inc.</p>
+          </div>
+          <div className="flex items-center">
+            <div className="px-4">
+              <Link to="/privacy-policy" className="hover:text-white">About us</Link>
+            </div>
+            <div className="px-4">
+              <Link to="#" className="hover:text-white">Contact us</Link>
+            </div>
+            <div className="px-4">
+              <Link to="#" className="hover:text-white">Blog</Link>
+            </div>
+            <div className="px-4">
+              <Link to="#" className="hover:text-white">Investors</Link>
+            </div>
+            <div className="px-4">
+              <Link to="#" className="hover:text-white">Help and Support</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
