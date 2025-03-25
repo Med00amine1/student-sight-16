@@ -1,4 +1,3 @@
-
 export interface Course {
   id: string;
   title: string;
@@ -89,15 +88,26 @@ export const metrics: Metric[] = [
   { label: "Completion Rate", value: 68, change: 8, icon: "completion" }
 ];
 
-// Simulate API calls with delay
+// Fetch all courses
 export const fetchCourses = (): Promise<Course[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(courses);
-    }, 500);
+    }, 800);
   });
 };
 
+// Fetch a course by ID
+export const fetchCourseById = (id: string): Promise<Course | null> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const course = courses.find(course => course.id === id);
+      resolve(course || null);
+    }, 800);
+  });
+};
+
+// Fetch all students
 export const fetchStudents = (): Promise<Student[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -106,14 +116,7 @@ export const fetchStudents = (): Promise<Student[]> => {
   });
 };
 
-export const fetchCourseById = (id: string): Promise<Course | undefined> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(courses.find(course => course.id === id));
-    }, 300);
-  });
-};
-
+// Fetch students by course ID
 export const fetchStudentsByCourse = (courseId: string): Promise<Student[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -122,6 +125,7 @@ export const fetchStudentsByCourse = (courseId: string): Promise<Student[]> => {
   });
 };
 
+// Fetch metrics
 export const fetchMetrics = (): Promise<Metric[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {

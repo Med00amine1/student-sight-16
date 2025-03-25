@@ -1,27 +1,31 @@
 
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export function Layout() {
   const location = useLocation();
   const [pageTitle, setPageTitle] = useState("Dashboard");
+  const params = useParams();
   
   useEffect(() => {
-    switch (location.pathname) {
-      case "/":
+    switch (true) {
+      case location.pathname === "/":
         setPageTitle("Dashboard");
         break;
-      case "/add-course":
+      case location.pathname === "/add-course":
         setPageTitle("Add Course");
         break;
-      case "/my-courses":
+      case location.pathname === "/my-courses":
         setPageTitle("My Courses");
         break;
-      case "/students":
+      case location.pathname === "/students":
         setPageTitle("Students Enrolled");
+        break;
+      case location.pathname.startsWith("/course/"):
+        setPageTitle("Course Details");
         break;
       default:
         setPageTitle("Dashboard");

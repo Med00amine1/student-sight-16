@@ -8,6 +8,7 @@ import { Layout } from "@/components/layout/Layout";
 import Dashboard from "@/pages/Dashboard";
 import AddCourse from "@/pages/AddCourse";
 import MyCourses from "@/pages/MyCourses";
+import CourseDetail from "@/pages/CourseDetail";
 import StudentsEnrolled from "@/pages/StudentsEnrolled";
 import NotFound from "@/pages/NotFound";
 
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/add-course" element={<AddCourse />} />
             <Route path="/my-courses" element={<MyCourses />} />
+            <Route path="/course/:id" element={<CourseDetail />} />
             <Route path="/students" element={<StudentsEnrolled />} />
           </Route>
           <Route path="*" element={<NotFound />} />

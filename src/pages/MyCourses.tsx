@@ -20,7 +20,8 @@ import {
   Pencil, 
   Trash2, 
   Users, 
-  MoreHorizontal 
+  MoreHorizontal,
+  ExternalLink 
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -183,7 +184,14 @@ export default function MyCourses() {
                           />
                         </div>
                         <div>
-                          <div className="font-medium">{course.title}</div>
+                          <div className="font-medium">
+                            <Link 
+                              to={`/course/${course.id}`}
+                              className="hover:text-primary hover:underline"
+                            >
+                              {course.title}
+                            </Link>
+                          </div>
                           <div className="text-xs text-muted-foreground truncate max-w-[300px]">
                             {course.description}
                           </div>
@@ -218,6 +226,15 @@ export default function MyCourses() {
                             <Users size={16} />
                           </Link>
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          asChild
+                        >
+                          <Link to={`/course/${course.id}`}>
+                            <ExternalLink size={16} />
+                          </Link>
+                        </Button>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
@@ -225,6 +242,12 @@ export default function MyCourses() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link to={`/course/${course.id}`} className="w-full">
+                                <ExternalLink size={14} className="mr-2" />
+                                View Details
+                              </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem>
                               <Pencil size={14} className="mr-2" />
                               Edit
