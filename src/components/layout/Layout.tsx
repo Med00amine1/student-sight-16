@@ -6,14 +6,22 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button"; 
 import { authService } from "@/services/auth.service";
+import { User, BookOpen } from "lucide-react";
+import { toast } from "sonner";
 
 export function Layout() {
   const location = useLocation();
   const [pageTitle, setPageTitle] = useState("Dashboard");
   const params = useParams();
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("Teacher");
   
   useEffect(() => {
+    // Get the current user name from auth service
+    const name = authService.getUserName();
+    if (name) setUserName(name);
+    
+    // Set the page title based on the current route
     switch (true) {
       case location.pathname === "/dashboard":
         setPageTitle("Dashboard");
@@ -40,6 +48,7 @@ export function Layout() {
   
   const handleBackToStudent = () => {
     authService.switchToStudentMode();
+    toast.success("Switched to student view");
     navigate('/index');
   };
   
@@ -55,14 +64,20 @@ export function Layout() {
       
       <div className="flex-1 flex flex-col">
         <Header title={pageTitle}>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleBackToStudent}
-            className="ml-auto"
-          >
-            Back to Student View
-          </Button>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground hidden md:inline-block">
+              Welcome, {userName}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBackToStudent}
+              className="flex items-center gap-2"
+            >
+              <User size={16} />
+              <span className="hidden sm:inline-block">Back to Student View</span>
+            </Button>
+          </div>
         </Header>
         
         <main className={cn(

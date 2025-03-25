@@ -232,7 +232,7 @@ export const coursePlayerService = {
       return result;
     } catch (error) {
       console.error('Error fetching course progress:', error);
-      // Return default values with the correct structure instead of an empty object
+      // Return default values with the correct structure
       return {
         completedLectures: [],
         completedSections: [],

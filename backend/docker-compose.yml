@@ -11,10 +11,13 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
+      - SECRET_KEY=your_secret_key_here
+      - DEBUG=true
+      - DATABASE_URL=sqlite:///data/courses.db
     restart: unless-stopped
-    # Add healthcheck to verify the service is running properly
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    command: python app.py
