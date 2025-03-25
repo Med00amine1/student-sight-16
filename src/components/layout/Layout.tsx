@@ -1,7 +1,7 @@
 
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { Outlet, useLocation, useParams, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useParams, useNavigate, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button"; 
