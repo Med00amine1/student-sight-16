@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,11 +26,13 @@ export default function Index() {
   const [showMenu, setShowMenu] = useState(false);
   const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
   const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         // Fetch user data
         const userData = await authService.getCurrentUser();
         setUser(userData);
@@ -44,6 +47,8 @@ export default function Index() {
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to load course data");
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -173,7 +178,7 @@ export default function Index() {
           )}
         </div>
 
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
@@ -193,7 +198,7 @@ export default function Index() {
                 {featuredCourses.length > 0 ? (
                   featuredCourses.map((course) => (
                     <div key={course.id} className="bg-gray-700 p-4 rounded-lg transition transform hover:scale-105 hover:shadow-xl">
-                      <Link to={`/course/${course.id}`} className="block">
+                      <Link to={`/course-details/${course.id}`} className="block">
                         <div className="w-full h-32 bg-gray-600 rounded-lg mb-4 overflow-hidden">
                           {course.image ? (
                             <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
@@ -238,7 +243,7 @@ export default function Index() {
                 {recommendedCourses.length > 0 ? (
                   recommendedCourses.map((course) => (
                     <div key={course.id} className="bg-gray-700 p-4 rounded-lg transition transform hover:scale-105 hover:shadow-xl">
-                      <Link to={`/course/${course.id}`} className="block">
+                      <Link to={`/course-details/${course.id}`} className="block">
                         <div className="w-full h-32 bg-gray-600 rounded-lg mb-4 overflow-hidden">
                           {course.image ? (
                             <img src={course.image} alt={course.title} className="w-full h-full object-cover" />

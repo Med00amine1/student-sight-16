@@ -13,6 +13,7 @@ import Dashboard from "@/pages/Dashboard";
 import AddCourse from "@/pages/AddCourse";
 import MyCourses from "@/pages/MyCourses";
 import CourseDetail from "@/pages/CourseDetail";
+import CourseDetails from "@/pages/CourseDetails";
 import CoursePlayer from "@/pages/CoursePlayer";
 import StudentsEnrolled from "@/pages/StudentsEnrolled";
 import CourseCatalog from "@/pages/CourseCatalog";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/course-details/:id" element={<CourseDetails />} />
           
           {/* Authenticated user routes */}
           <Route path="/index" element={

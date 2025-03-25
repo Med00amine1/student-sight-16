@@ -50,36 +50,59 @@ const Home = () => {
           </Button>
         </form>
         
-        {/* Empty div to balance layout */}
-        <div className="w-1/5"></div>
+        {/* Authentication Buttons */}
+        <div className="flex space-x-4">
+          <Link
+            to="/login"
+            className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition duration-300"
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 hover:scale-105 transform transition duration-300"
+          >
+            Sign Up
+          </Link>
+        </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative py-24 px-6 bg-gray-900">
-        <div className="absolute top-0 left-0 w-full h-full bg-blue-500 opacity-20"></div>
-
-        <div className="text-left pl-6 relative">
-          <h2 className="text-5xl font-bold text-white leading-tight mb-2">Achieve your career goals</h2>
-          <h2 className="text-5xl font-bold text-white leading-tight">with CustomAcademy</h2>
-
-          <div className="mt-8 flex space-x-6">
-            <Link
-              to="/login"
-              className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 hover:scale-105 transform transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300"
-            >
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 hover:scale-105 transform transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300"
-            >
-              Sign Up
-            </Link>
+      <section className="relative py-16 px-6 bg-gray-900">
+        <div className="container mx-auto flex items-center justify-between">
+          {/* Left side with text */}
+          <div className="w-1/2 pr-8">
+            <h2 className="text-5xl font-bold text-white leading-tight mb-4">
+              Achieve your career goals<br />with CustomAcademy
+            </h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Learn from industry experts and gain the skills you need to succeed in today's competitive job market.
+            </p>
+            <div className="flex space-x-6">
+              <Link
+                to="/login"
+                className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 hover:scale-105 transform transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 hover:scale-105 transform transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300"
+              >
+                Sign Up
+              </Link>
+            </div>
           </div>
-
-          {/* Person's Image - Using a placeholder */}
-          <div className="absolute bottom-0 right-8 mb-8">
-            <div className="w-96 h-96 bg-gray-700 rounded-full"></div>
+          
+          {/* Right side with image */}
+          <div className="w-1/2 flex justify-center">
+            <div className="w-[400px] h-[400px] bg-blue-500 rounded-full overflow-hidden">
+              <img 
+                src="/placeholder.svg" 
+                alt="Person learning online" 
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
