@@ -12,6 +12,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
   
   const isValidEmail = (email: string) => {
@@ -21,30 +22,31 @@ const Register = () => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
     
     // Client-side validation
     if (name.length === 0 || name.length > 24) {
-      toast.error('Full Name must be between 1 and 24 characters.');
+      setErrorMsg('Full Name must be between 1 and 24 characters.');
       return;
     }
     
     if (!isValidEmail(email)) {
-      toast.error('Please enter a valid email address.');
+      setErrorMsg('Please enter a valid email address.');
       return;
     }
     
     if (email.length > 34) {
-      toast.error('Email must not exceed 34 characters.');
+      setErrorMsg('Email must not exceed 34 characters.');
       return;
     }
     
     if (password.length === 0 || password.length > 8) {
-      toast.error('Password must be 1-8 characters long.');
+      setErrorMsg('Password must be 1-8 characters long.');
       return;
     }
     
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match.');
+      setErrorMsg('Passwords do not match.');
       return;
     }
     
@@ -54,9 +56,9 @@ const Register = () => {
       await authService.register({ name, email, password });
       toast.success('Registration successful!');
       navigate('/index');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error('Registration failed. Please try again.');
+      setErrorMsg(error.response?.data?.error || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -82,6 +84,12 @@ const Register = () => {
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full transition-transform duration-300 transform hover:shadow-2xl hover:scale-[1.02]">
           <h2 className="text-3xl font-semibold mb-4 text-center tracking-wide">Sign Up</h2>
           <p className="text-center mb-4 text-gray-400">Create a free account with your email</p>
+
+          {errorMsg && (
+            <div className="mb-4 p-2 bg-red-900/30 border border-red-500 rounded text-center text-red-400">
+              {errorMsg}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -170,15 +178,6 @@ const Register = () => {
             </div>
             <div className="px-4">
               <Link to="#" className="hover:text-white">Contact us</Link>
-            </div>
-            <div className="px-4">
-              <Link to="#" className="hover:text-white">Blog</Link>
-            </div>
-            <div className="px-4">
-              <Link to="#" className="hover:text-white">Investors</Link>
-            </div>
-            <div className="px-4">
-              <Link to="#" className="hover:text-white">Help and Support</Link>
             </div>
           </div>
         </div>

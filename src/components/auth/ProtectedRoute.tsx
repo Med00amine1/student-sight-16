@@ -19,7 +19,12 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   
   // If specific role is required, verify it
   if (requiredRole) {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userJson = localStorage.getItem('user');
+    if (!userJson) {
+      return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+    
+    const user = JSON.parse(userJson);
     
     // Check if user has required role
     // For instructor role, also allow if isTeacher flag is true

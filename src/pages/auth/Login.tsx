@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -22,25 +24,26 @@ const Login = () => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
     
     // Client-side validation
     if (!isValidEmail(email)) {
-      toast.error('Please enter a valid email address.');
+      setErrorMsg('Please enter a valid email address.');
       return;
     }
     
     if (email.length > 30) {
-      toast.error('Email must not exceed 30 characters.');
+      setErrorMsg('Email must not exceed 30 characters.');
       return;
     }
     
     if (password.length === 0) {
-      toast.error('Please enter a password.');
+      setErrorMsg('Please enter a password.');
       return;
     }
     
     if (password.length > 8) {
-      toast.error('Password must not exceed 8 characters.');
+      setErrorMsg('Password must not exceed 8 characters.');
       return;
     }
     
@@ -50,9 +53,9 @@ const Login = () => {
       await authService.login({ email, password });
       toast.success('Login successful!');
       navigate(from);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      toast.error('Login failed. Please check your credentials.');
+      setErrorMsg(error.response?.data?.error || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +96,12 @@ const Login = () => {
             <h1 className="text-center mb-4 text-white-400">
               Login to continue your learning journey
             </h1>
+
+            {errorMsg && (
+              <div className="mb-4 p-2 bg-red-900/30 border border-red-500 rounded text-center text-red-400">
+                {errorMsg}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit}>
               {/* Email Input */}

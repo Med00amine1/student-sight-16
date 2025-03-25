@@ -43,6 +43,12 @@ export function Layout() {
     navigate('/index');
   };
   
+  const isTeacher = authService.isTeacher();
+  
+  if (!isTeacher) {
+    return <Navigate to="/index" replace />;
+  }
+  
   return (
     <div className="flex min-h-screen">
       <Sidebar />

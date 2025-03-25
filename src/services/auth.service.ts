@@ -1,4 +1,3 @@
-
 import { apiClient } from './api.service';
 import { API_ENDPOINTS } from '@/config/api';
 import { toast } from 'sonner';
@@ -45,9 +44,13 @@ export const authService = {
       localStorage.setItem('user', JSON.stringify(response.user));
       
       return response.user;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
-      toast.error('Login failed. Please check your credentials.');
+      
+      // More specific error message
+      const errorMessage = error.response?.data?.error || 'Login failed. Please check your credentials.';
+      toast.error(errorMessage);
+      
       throw error;
     }
   },
@@ -64,9 +67,13 @@ export const authService = {
       localStorage.setItem('user', JSON.stringify(response.user));
       
       return response.user;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration failed:', error);
-      toast.error('Registration failed. Please try again.');
+      
+      // More specific error message
+      const errorMessage = error.response?.data?.error || 'Registration failed. Please try a different email.';
+      toast.error(errorMessage);
+      
       throw error;
     }
   },
